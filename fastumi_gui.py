@@ -679,6 +679,7 @@ def build_gui_classes(QtCore, QtGui, QtWidgets):
             self._load_offset()
             self._load_display_offset()
             self._load_task_name()
+            self._refresh_record_indicator()
             self._init_mujoco()
             self.timer = QtCore.QTimer(self)
             self.timer.timeout.connect(self._update_ui)
@@ -821,6 +822,7 @@ def build_gui_classes(QtCore, QtGui, QtWidgets):
             self.reset_btn.clicked.connect(self._reset_arm)
             self.open_record_btn.clicked.connect(self._open_record_folder)
             self.toggle_sliders_btn.clicked.connect(self._toggle_sliders)
+            self.task_name_edit.textChanged.connect(self._refresh_record_indicator)
             self.control_panel.setVisible(False)
             self.toggle_sliders_btn.setText("Show Sliders")
             self.record_toggle_shortcut = QtWidgets.QShortcut(
@@ -929,23 +931,58 @@ def build_gui_classes(QtCore, QtGui, QtWidgets):
                 QtWidgets.QApplication.beep()
                 QtCore.QTimer.singleShot(120, QtWidgets.QApplication.beep)
 
+        def _current_task_dir(self):
+            base_dir = os.path.abspath(self.args.record_dir)
+            raw_task = self.task_name_edit.text() if self.task_name_edit is not None else ""
+            task_name = self._sanitize_task_name(raw_task)
+            return os.path.join(base_dir, task_name)
+
+        def _max_record_index(self, task_dir):
+            max_idx = 0
+            try:
+                for entry in os.listdir(task_dir):
+                    m = re.match(r"^recording_(\d+)$", entry)
+                    if m:
+                        idx = int(m.group(1))
+                        if idx > max_idx:
+                            max_idx = idx
+            except Exception:
+                pass
+            return max_idx
+
+        def _record_indicator_index(self, recording):
+            if recording and self.record_dir:
+                m = re.search(r"recording_(\d+)$", self.record_dir)
+                if m:
+                    return int(m.group(1))
+            return self._max_record_index(self._current_task_dir())
+
+        def _refresh_record_indicator(self):
+            self._set_record_indicator(self.recording, play_sound=False)
+
         def _set_record_indicator(self, recording, play_sound=True):
+            idx = self._record_indicator_index(recording)
+            text = (
+                "<div style='text-align:center;'>"
+                "REC: {}<br><span style='font-size:56px; font-weight:900;'>{:03d}</span>"
+                "</div>"
+            ).format("ON" if recording else "OFF", idx)
             if recording:
                 if hasattr(self, "record_state_label"):
-                    self.record_state_label.setText("REC: ON")
+                    self.record_state_label.setText(text)
                     self.record_state_label.setStyleSheet(
                         "color: #ffffff; background-color: #c62828; "
-                        "font-weight: 900; font-size: 24px; "
+                        "font-weight: 900; font-size: 28px; "
                         "padding: 6px 14px; border: 3px solid #7f0000; border-radius: 8px;"
                     )
                 if play_sound:
                     self._play_sound("start")
             else:
                 if hasattr(self, "record_state_label"):
-                    self.record_state_label.setText("REC: OFF")
+                    self.record_state_label.setText(text)
                     self.record_state_label.setStyleSheet(
                         "color: #666666; background-color: #f1f1f1; "
-                        "font-weight: 800; font-size: 20px; "
+                        "font-weight: 800; font-size: 24px; "
                         "padding: 6px 14px; border: 2px solid #bdbdbd; border-radius: 8px;"
                     )
                 if play_sound:
@@ -968,17 +1005,7 @@ def build_gui_classes(QtCore, QtGui, QtWidgets):
             return name or "default"
 
         def _next_record_index(self, task_dir):
-            max_idx = 0
-            try:
-                for entry in os.listdir(task_dir):
-                    m = re.match(r"^recording_(\d+)$", entry)
-                    if m:
-                        idx = int(m.group(1))
-                        if idx > max_idx:
-                            max_idx = idx
-            except Exception:
-                pass
-            return max_idx + 1
+            return self._max_record_index(task_dir) + 1
 
         def _open_record_folder(self):
             if self.recording and self.record_dir:
@@ -1532,6 +1559,7 @@ def build_gui_classes(QtCore, QtGui, QtWidgets):
                 if self.record_dir == last_dir:
                     self.record_dir = None
                 self.last_record_dir = None
+                self._refresh_record_indicator()
                 self.statusBar().showMessage("Deleted recording {}".format(last_dir))
             except Exception as exc:
                 self.statusBar().showMessage("Delete failed: {}".format(exc))
