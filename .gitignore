@@ -11,4 +11,3 @@ config/gripper_display_offset.json
 *.avi
 *.mp4
 *.wav
-!track0-2026-03-07_17.01.16.mp4
