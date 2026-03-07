@@ -1201,6 +1201,10 @@ def build_gui_classes(QtCore, QtGui, QtWidgets):
             iters = self.mj.get("ik_iters", 6)
             damping = self.mj.get("ik_damping", 0.1)
             max_step = self.mj.get("ik_step", 0.15)
+            posture_gain = self.mj.get("ik_posture_gain", 0.08)
+            q_ref = None
+            if self.default_fr3_qpos is not None and len(self.default_fr3_qpos) == len(qpos_adrs):
+                q_ref = np.array(self.default_fr3_qpos, dtype=float)
             for _ in range(iters):
                 mujoco.mj_forward(model, data)
                 cur_quat = np.array(data.xquat[self.mj["ref_body_id"]])
@@ -1227,7 +1231,13 @@ def build_gui_classes(QtCore, QtGui, QtWidgets):
                 J = np.vstack([Jp, Jr])
                 JT = J.T
                 A = J @ JT + (damping * damping) * np.eye(6)
-                dq = JT @ np.linalg.solve(A, err)
+                J_pinv = JT @ np.linalg.solve(A, np.eye(6))
+                dq = J_pinv @ err
+                if q_ref is not None and posture_gain > 0.0:
+                    q_cur = np.array([data.qpos[qadr] for qadr in qpos_adrs], dtype=float)
+                    dq_posture = posture_gain * (q_ref - q_cur)
+                    null_proj = np.eye(len(qpos_adrs)) - (J_pinv @ J)
+                    dq = dq + null_proj @ dq_posture
                 scale = max(1.0, np.max(np.abs(dq)) / max_step)
                 dq = dq / scale
                 for i, qadr in enumerate(qpos_adrs):
@@ -1329,6 +1339,7 @@ def build_gui_classes(QtCore, QtGui, QtWidgets):
                 "ik_iters": 6,
                 "ik_damping": 0.1,
                 "ik_step": 0.15,
+                "ik_posture_gain": 0.08,
                 "arm_geom_ids": [],
                 "arm_geom_rgba": None,
             }
