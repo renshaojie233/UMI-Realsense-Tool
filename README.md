@@ -24,12 +24,46 @@ Recorded usage video:
 
 ## External prerequisites
 
-This folder is self-contained at the file-path level for the GUI itself, but it still depends on system/runtime components that are not vendored here:
+This repository is self-contained for the GUI code and MuJoCo assets, but it still depends on external system/runtime components.
 
-- ROS 1 (`/opt/ros/noetic` or `/opt/ros/melodic`)
+Required:
+
+- Ubuntu Linux
+- ROS 1: `noetic` is the expected default, `melodic` is also supported by the helper scripts
 - a catkin workspace that provides `xv_sdk`
-- Python packages such as `rospy`, `cv_bridge`, `opencv-python`, `numpy`, `mujoco`, `pyrealsense2`, and either `PyQt5` or `PySide2`
-- an XV device / ROS topics, if you want live data
+- Python 3
+- an XV device and its ROS topics, if you want live data
+
+Required ROS environment:
+
+- `/opt/ros/noetic/setup.bash` or `/opt/ros/melodic/setup.bash`
+- `~/catkin_ws/devel/setup.bash` or `~/ros_ws/devel/setup.bash`
+
+Required Python packages:
+
+- `numpy`
+- `opencv-python`
+- `mujoco`
+- `pyrealsense2`
+- `rospy`
+- `cv_bridge`
+- `PyQt5` or `PySide2`
+
+Typical setup example:
+
+```bash
+source /opt/ros/noetic/setup.bash
+source ~/catkin_ws/devel/setup.bash
+python3 -m venv ~/venvs/fastumi
+source ~/venvs/fastumi/bin/activate
+pip install numpy opencv-python mujoco pyrealsense2 PyQt5
+```
+
+Notes:
+
+- `rospy` and `cv_bridge` are usually installed from the ROS side rather than plain `pip`.
+- If `xv_sdk` is missing from your catkin workspace, the GUI can open, but live XV topics will not be available.
+- If `mujoco` is missing, the arm visualization and IK-related GUI features will fail.
 
 ## Start
 
