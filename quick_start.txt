@@ -1,0 +1,46 @@
+source /opt/ros/noetic/setup.bash
+source ~/catkin_ws/devel/setup.bash
+source ~/venvs/fastumi/bin/activate
+python fastumi_multi_reader.py
+python fastumi_gui.py
+
+
+python fastumi_gui.py --mjcf assets/fr3_robotiq_scene.xml
+
+看右侧mujoco内的场景。现在有两个夹爪，一个是安在机械臂上的，另
+  一个是根据获取的位姿显示的。你能不能在GUI加一个对齐按钮，我点击一下，你就能计
+  算目前滑动条的xyz rx ry rz参数，最终将独立夹爪和机械臂上夹爪重合起来，注意，
+  机械臂夹爪是参考，当我点击对齐按钮，你需要经过变化后，将独立夹爪的状态进行对
+  齐。你理解了吗？哪里不动可以问我
+
+
+ 对应的欧拉角（roll/pitch/yaw，单位度）是：
+
+  - roll = -43.3431°
+  - pitch = -2.1366°
+  - yaw = 2.0224°
+
+(franky) rsj@rsj-TB:~/franky_control$ python get_cartesian_test.py 
+cartesian_state CartesianState(pose=RobotPose(ee_pose=Affine(t=[0.679368 0.209314 0.228972], q=[0.91831 -0.395634 -0.00297157 -0.0131104]), elbow=ElbowState(joint_3_pos=0.186107, joint_4_flip=FlipDirection.Negative)), velocity=RobotVelocity(ee_twist=Twist(lin=[0 0 0], ang=[0 0 0]), elbow_vel=0))
+robot_pose RobotPose(ee_pose=Affine(t=[0.679368 0.209314 0.228972], q=[0.91831 -0.395634 -0.00297157 -0.0131104]), elbow=ElbowState(joint_3_pos=0.186107, joint_4_flip=FlipDirection.Negative))
+ee_pose Affine(t=[0.679368 0.209314 0.228972], q=[0.91831 -0.395634 -0.00297157 -0.0131104])
+elbow_pos ElbowState(joint_3_pos=0.186107, joint_4_flip=FlipDirection.Negative)
+ee_twist Twist(lin=[0 0 0], ang=[0 0 0])
+elbow_vel 0.0
+joint_state JointState(position=[0.147086 0.594434 0.186103 -1.4851 -0.0918081 2.08228 1.9447], velocity=[-0.000608207 -0.000786206 -0.000245631 0.00072625 -0.000953013 -0.000858513 0.000420765])
+joint_pos [ 0.14708604  0.59443432  0.18610318 -1.48510444 -0.09180812  2.0822773
+  1.94469917]
+
+
+
+(franky) rsj@rsj-TB:~/franky_control$ python get_cartesian_test.py 
+cartesian_state CartesianState(pose=RobotPose(ee_pose=Affine(t=[0.690702 0.000908656 0.105101], q=[0.924869 -0.380058 0.0122284 0.0048999]), elbow=ElbowState(joint_3_pos=-0.011173, joint_4_flip=FlipDirection.Negative)), velocity=RobotVelocity(ee_twist=Twist(lin=[0 0 0], ang=[0 0 0]), elbow_vel=0))
+robot_pose RobotPose(ee_pose=Affine(t=[0.690702 0.000908656 0.105101], q=[0.924869 -0.380058 0.0122284 0.0048999]), elbow=ElbowState(joint_3_pos=-0.011173, joint_4_flip=FlipDirection.Negative))
+ee_pose Affine(t=[0.690702 0.000908656 0.105101], q=[0.924869 -0.380058 0.0122284 0.0048999])
+elbow_pos ElbowState(joint_3_pos=-0.011173, joint_4_flip=FlipDirection.Negative)
+ee_twist Twist(lin=[0 0 0], ang=[0 0 0])
+elbow_vel 0.0
+joint_state JointState(position=[0.0142438 0.695839 -0.0111711 -1.64737 -0.0160842 2.3619 1.58224], velocity=[-0.000580343 -0.000695558 0.000625474 -0.00162615 -9.76367e-05 0.000882436 -0.000767753])
+joint_pos [ 0.01424382  0.69583887 -0.0111711  -1.64737236 -0.01608417  2.361902
+  1.58224487]
+

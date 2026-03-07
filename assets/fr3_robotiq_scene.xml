@@ -1,0 +1,432 @@
+<mujoco model="fr3_robotiq_scene">
+  <compiler angle="radian" meshdir="franka_fr3"/>
+
+  <option cone="elliptic" impratio="10" gravity="0 0 0"/>
+
+  <default>
+    <default class="fr3">
+      <joint damping="0.21" armature="0.195" frictionloss="1.137"/>
+      <position inheritrange="1"/>
+      <default class="visual">
+        <geom type="mesh" group="2" contype="0" conaffinity="0"/>
+      </default>
+      <default class="collision">
+        <geom type="mesh" group="3" mass="0" density="0"/>
+      </default>
+      <site size="0.001" rgba="0.5 0.5 0.5 0.3" group="4"/>
+    </default>
+    <default class="2f85">
+      <mesh scale="0.001 0.001 0.001"/>
+      <general biastype="affine"/>
+      <joint axis="1 0 0"/>
+      <default class="driver">
+        <joint range="0 0.8" armature="0.005" damping="0.1" solimplimit="0.95 0.99 0.001" solreflimit="0.005 1"/>
+      </default>
+      <default class="follower">
+        <joint range="-0.872664 0.872664" armature="0.001" pos="0 -0.018 0.0065" solimplimit="0.95 0.99 0.001" solreflimit="0.005 1"/>
+      </default>
+      <default class="spring_link">
+        <joint range="-0.29670597283 0.8" armature="0.001" stiffness="0.05" springref="2.62" damping="0.00125"/>
+      </default>
+      <default class="coupler">
+        <joint range="-1.57 0" armature="0.001" solimplimit="0.95 0.99 0.001" solreflimit="0.005 1"/>
+      </default>
+      <default class="rq_visual">
+        <geom type="mesh" contype="0" conaffinity="0" group="2"/>
+      </default>
+      <default class="rq_collision">
+        <geom type="mesh" group="3"/>
+        <default class="rq_pad_box1">
+          <geom mass="0" type="box" pos="0 -0.0026 0.028125" size="0.011 0.004 0.009375" friction="0.7"
+            solimp="0.95 0.99 0.001" solref="0.004 1" priority="1" rgba="0.55 0.55 0.55 1"/>
+        </default>
+        <default class="rq_pad_box2">
+          <geom mass="0" type="box" pos="0 -0.0026 0.009375" size="0.011 0.004 0.009375" friction="0.6"
+            solimp="0.95 0.99 0.001" solref="0.004 1" priority="1" rgba="0.45 0.45 0.45 1"/>
+        </default>
+      </default>
+    </default>
+  </default>
+
+  <asset>
+    <texture name="skybox" type="skybox" builtin="gradient" rgb1="0.9 0.95 1" rgb2="0.6 0.7 0.9"
+      width="256" height="256"/>
+    <texture name="grid" type="2d" builtin="checker" rgb1="0.9 0.9 0.9" rgb2="0.8 0.8 0.8"
+      width="512" height="512"/>
+    <material name="grid" texture="grid" texrepeat="4 4" texuniform="true" rgba="1 1 1 1"/>
+
+    <material name="fr3_black" rgba=".2 .2 .2 1"/>
+    <material name="fr3_white" rgba="1 1 1 1"/>
+    <material name="fr3_red" rgba="1 0.072272 0.039546 1"/>
+    <material name="fr3_gray" rgba="0.863156 0.863156 0.863157 1"/>
+    <material name="fr3_button_green" rgba="0.102241 0.571125 0.102242 1"/>
+    <material name="fr3_button_red" rgba="0.520996 0.008023 0.013702 1"/>
+    <material name="fr3_button_blue" rgba="0.024157 0.445201 0.737911 1"/>
+
+    <material name="rq_metal" rgba="0.58 0.58 0.58 1"/>
+    <material name="rq_silicone" rgba="0.1882 0.1882 0.1882 1"/>
+    <material name="rq_gray" rgba="0.4627 0.4627 0.4627 1"/>
+    <material name="rq_black" rgba="0.149 0.149 0.149 1"/>
+
+    <mesh file="link0_0.obj"/>
+    <mesh file="link0_1.obj"/>
+    <mesh file="link0_2.obj"/>
+    <mesh file="link0_3.obj"/>
+    <mesh file="link0_4.obj"/>
+    <mesh file="link0_5.obj"/>
+    <mesh file="link0_6.obj"/>
+    <mesh file="link1.obj"/>
+    <mesh file="link2.obj"/>
+    <mesh file="link3_0.obj"/>
+    <mesh file="link3_1.obj"/>
+    <mesh file="link4_0.obj"/>
+    <mesh file="link4_1.obj"/>
+    <mesh file="link5_0.obj"/>
+    <mesh file="link5_1.obj"/>
+    <mesh file="link5_2.obj"/>
+    <mesh file="link6_0.obj"/>
+    <mesh file="link6_1.obj"/>
+    <mesh file="link6_2.obj"/>
+    <mesh file="link6_3.obj"/>
+    <mesh file="link6_4.obj"/>
+    <mesh file="link6_5.obj"/>
+    <mesh file="link6_6.obj"/>
+    <mesh file="link6_7.obj"/>
+    <mesh file="link7_0.obj"/>
+    <mesh file="link7_1.obj"/>
+    <mesh file="link7_2.obj"/>
+    <mesh file="link7_3.obj"/>
+
+    <mesh name="link0_coll" file="link0.stl"/>
+    <mesh name="link1_coll" file="link1.stl"/>
+    <mesh name="link2_coll" file="link2.stl"/>
+    <mesh name="link3_coll" file="link3.stl"/>
+    <mesh name="link4_coll" file="link4.stl"/>
+    <mesh name="link5_coll" file="link5.stl"/>
+    <mesh name="link6_coll" file="link6.stl"/>
+    <mesh name="link7_coll" file="link7.stl"/>
+
+    <mesh class="2f85" file="../robotiq_2f85/assets/base_mount.stl"/>
+    <mesh class="2f85" file="../robotiq_2f85/assets/base.stl"/>
+    <mesh class="2f85" file="../robotiq_2f85/assets/driver.stl"/>
+    <mesh class="2f85" file="../robotiq_2f85/assets/coupler.stl"/>
+    <mesh class="2f85" file="../robotiq_2f85/assets/follower.stl"/>
+    <mesh class="2f85" file="../robotiq_2f85/assets/pad.stl"/>
+    <mesh class="2f85" file="../robotiq_2f85/assets/silicone_pad.stl"/>
+    <mesh class="2f85" file="../robotiq_2f85/assets/spring_link.stl"/>
+  </asset>
+
+  <worldbody>
+    <light name="sun_light" pos="0 0 1.5" dir="0 0 -1" directional="true" diffuse="0.45 0.45 0.45"
+      ambient="0.15 0.15 0.15" specular="0.03 0.03 0.03"/>
+    <geom name="floor" type="plane" pos="0 0 -1" size="2 2 0.1" material="grid" contype="0" conaffinity="0"/>
+    <body name="axes" pos="0 0 0.001">
+      <geom name="axis_origin" type="sphere" size="0.006" rgba="1 1 1 1" contype="0" conaffinity="0"/>
+      <geom name="axis_x" type="capsule" fromto="0 0 0 0.2 0 0" size="0.004" rgba="1 0 0 1" contype="0" conaffinity="0"/>
+      <geom name="axis_y" type="capsule" fromto="0 0 0 0 0.2 0" size="0.004" rgba="0 1 0 1" contype="0" conaffinity="0"/>
+      <geom name="axis_z" type="capsule" fromto="0 0 0 0 0 0.2" size="0.004" rgba="0 0 1 1" contype="0" conaffinity="0"/>
+    </body>
+
+    <body name="live_robotiq_base_mount" pos="0 0 0.107" childclass="2f85">
+      <geom name="live_grip_axis_x" type="capsule" fromto="0 0 0 0.1 0 0" size="0.004" rgba="1 0 0 1" contype="0" conaffinity="0"/>
+      <geom name="live_grip_axis_y" type="capsule" fromto="0 0 0 0 0.1 0" size="0.004" rgba="0 1 0 1" contype="0" conaffinity="0"/>
+      <geom name="live_grip_axis_z" type="capsule" fromto="0 0 0 0 0 0.1" size="0.004" rgba="0 0 1 1" contype="0" conaffinity="0"/>
+        <freejoint name="live_base_mount_free"/>
+                        <geom class="rq_visual" mesh="base_mount" material="rq_black" contype="0" conaffinity="0"/>
+                        <geom class="rq_collision" mesh="base_mount" contype="0" conaffinity="0"/>
+                        <body name="live_robotiq_base" pos="0 0 0.0038" quat="1 0 0 -1">
+                          <inertial mass="0.777441" pos="0 -2.70394e-05 0.0354675" quat="1 -0.00152849 0 0"
+                            diaginertia="0.000260285 0.000225381 0.000152708"/>
+                          <geom class="rq_visual" mesh="base" material="rq_black" contype="0" conaffinity="0"/>
+                          <geom class="rq_collision" mesh="base" contype="0" conaffinity="0"/>
+                          <site name="live_pinch" pos="0 0 0.145" type="sphere" group="5" rgba="0.9 0.9 0.9 1" size="0.005"/>
+                          <body name="live_right_driver" pos="0 0.0306011 0.054904">
+                            <inertial mass="0.00899563" pos="2.96931e-12 0.0177547 0.00107314" quat="0.681301 0.732003 0 0"
+                              diaginertia="1.72352e-06 1.60906e-06 3.22006e-07"/>
+                            <joint name="live_right_driver_joint" class="driver"/>
+                            <geom class="rq_visual" mesh="driver" material="rq_gray" contype="0" conaffinity="0"/>
+                            <geom class="rq_collision" mesh="driver" contype="0" conaffinity="0"/>
+                            <body name="live_right_coupler" pos="0 0.0315 -0.0041">
+                              <inertial mass="0.0140974" pos="0 0.00301209 0.0232175" quat="0.705636 -0.0455904 0.0455904 0.705636"
+                                diaginertia="4.16206e-06 3.52216e-06 8.88131e-07"/>
+                              <joint name="live_right_coupler_joint" class="coupler"/>
+                              <geom class="rq_visual" mesh="coupler" material="rq_black" contype="0" conaffinity="0"/>
+                              <geom class="rq_collision" mesh="coupler" contype="0" conaffinity="0"/>
+                            </body>
+                          </body>
+                          <body name="live_right_spring_link" pos="0 0.0132 0.0609">
+                            <inertial mass="0.0221642" pos="-8.65005e-09 0.0181624 0.0212658" quat="0.663403 -0.244737 0.244737 0.663403"
+                              diaginertia="8.96853e-06 6.71733e-06 2.63931e-06"/>
+                            <joint name="live_right_spring_link_joint" class="spring_link"/>
+                            <geom class="rq_visual" mesh="spring_link" material="rq_black" contype="0" conaffinity="0"/>
+                            <geom class="rq_collision" mesh="spring_link" contype="0" conaffinity="0"/>
+                            <body name="live_right_follower" pos="0 0.055 0.0375">
+                              <inertial mass="0.0125222" pos="0 -0.011046 0.0124786" quat="1 0.1664 0 0"
+                                diaginertia="2.67415e-06 2.4559e-06 6.02031e-07"/>
+                              <joint name="live_right_follower_joint" class="follower"/>
+                              <geom class="rq_visual" mesh="follower" material="rq_black" contype="0" conaffinity="0"/>
+                              <geom class="rq_collision" mesh="follower" contype="0" conaffinity="0"/>
+                              <body name="live_right_pad" pos="0 -0.0189 0.01352">
+                                <geom class="rq_pad_box1" name="live_right_pad1" contype="0" conaffinity="0"/>
+                                <geom class="rq_pad_box2" name="live_right_pad2" contype="0" conaffinity="0"/>
+                                <inertial mass="0.0035" pos="0 -0.0025 0.0185" quat="0.707107 0 0 0.707107"
+                                  diaginertia="4.73958e-07 3.64583e-07 1.23958e-07"/>
+                                <geom class="rq_visual" mesh="pad" material="rq_metal" contype="0" conaffinity="0"/>
+                                <body name="live_right_silicone_pad">
+                                  <geom class="rq_visual" mesh="silicone_pad" material="rq_black" contype="0" conaffinity="0"/>
+                                </body>
+                              </body>
+                            </body>
+                          </body>
+                          <body name="live_left_driver" pos="0 -0.0306011 0.054904" quat="0 0 0 1">
+                            <inertial mass="0.00899563" pos="0 0.0177547 0.00107314" quat="0.681301 0.732003 0 0"
+                              diaginertia="1.72352e-06 1.60906e-06 3.22006e-07"/>
+                            <joint name="live_left_driver_joint" class="driver"/>
+                            <geom class="rq_visual" mesh="driver" material="rq_gray" contype="0" conaffinity="0"/>
+                            <geom class="rq_collision" mesh="driver" contype="0" conaffinity="0"/>
+                            <body name="live_left_coupler" pos="0 0.0315 -0.0041">
+                              <inertial mass="0.0140974" pos="0 0.00301209 0.0232175" quat="0.705636 -0.0455904 0.0455904 0.705636"
+                                diaginertia="4.16206e-06 3.52216e-06 8.88131e-07"/>
+                              <joint name="live_left_coupler_joint" class="coupler"/>
+                              <geom class="rq_visual" mesh="coupler" material="rq_black" contype="0" conaffinity="0"/>
+                              <geom class="rq_collision" mesh="coupler" contype="0" conaffinity="0"/>
+                            </body>
+                          </body>
+                          <body name="live_left_spring_link" pos="0 -0.0132 0.0609" quat="0 0 0 1">
+                            <inertial mass="0.0221642" pos="-8.65005e-09 0.0181624 0.0212658" quat="0.663403 -0.244737 0.244737 0.663403"
+                              diaginertia="8.96853e-06 6.71733e-06 2.63931e-06"/>
+                            <joint name="live_left_spring_link_joint" class="spring_link"/>
+                            <geom class="rq_visual" mesh="spring_link" material="rq_black" contype="0" conaffinity="0"/>
+                            <geom class="rq_collision" mesh="spring_link" contype="0" conaffinity="0"/>
+                            <body name="live_left_follower" pos="0 0.055 0.0375">
+                              <inertial mass="0.0125222" pos="0 -0.011046 0.0124786" quat="1 0.1664 0 0"
+                                diaginertia="2.67415e-06 2.4559e-06 6.02031e-07"/>
+                              <joint name="live_left_follower_joint" class="follower"/>
+                              <geom class="rq_visual" mesh="follower" material="rq_black" contype="0" conaffinity="0"/>
+                              <geom class="rq_collision" mesh="follower" contype="0" conaffinity="0"/>
+                              <body name="live_left_pad" pos="0 -0.0189 0.01352">
+                                <geom class="rq_pad_box1" name="live_left_pad1" contype="0" conaffinity="0"/>
+                                <geom class="rq_pad_box2" name="live_left_pad2" contype="0" conaffinity="0"/>
+                                <inertial mass="0.0035" pos="0 -0.0025 0.0185" quat="1 0 0 1"
+                                  diaginertia="4.73958e-07 3.64583e-07 1.23958e-07"/>
+                                <geom class="rq_visual" mesh="pad" material="rq_metal" contype="0" conaffinity="0"/>
+                                <body name="live_left_silicone_pad">
+                                  <geom class="rq_visual" mesh="silicone_pad" material="rq_black" contype="0" conaffinity="0"/>
+                                </body>
+                              </body>
+                            </body>
+                          </body>
+                        </body>
+                      </body>
+
+    <body name="fr3_base" childclass="fr3">
+      <body name="fr3_link0">
+        <geom mesh="link0_0" material="fr3_black" class="visual"/>
+        <geom mesh="link0_1" material="fr3_white" class="visual"/>
+        <geom mesh="link0_2" material="fr3_white" class="visual"/>
+        <geom mesh="link0_3" material="fr3_white" class="visual"/>
+        <geom mesh="link0_4" material="fr3_white" class="visual"/>
+        <geom mesh="link0_5" material="fr3_red" class="visual"/>
+        <geom mesh="link0_6" material="fr3_black" class="visual"/>
+        <geom name="fr3_link0_collision" mesh="link0_coll" class="collision"/>
+        <body name="fr3_link1" pos="0 0 0.333">
+          <inertial pos="4.128e-07 -0.0181251 -0.0386036" quat="0.998098 -0.0605364 0.00380499 0.0110109" mass="2.92747"
+            diaginertia="0.0239286 0.0227246 0.00610634"/>
+          <joint name="fr3_joint1" axis="0 0 1" range="-2.7437 2.7437" actuatorfrcrange="-87 87"/>
+          <geom name="fr3_link1_collision" class="collision" mesh="link1_coll"/>
+          <geom material="fr3_white" mesh="link1" class="visual"/>
+          <body name="fr3_link2" quat="1 -1 0 0">
+            <inertial pos="0.00318289 -0.0743222 0.00881461" quat="0.502599 0.584437 -0.465998 0.434366" mass="2.93554"
+              diaginertia="0.0629567 0.0411924 0.0246371"/>
+            <joint name="fr3_joint2" axis="0 0 1" range="-1.7837 1.7837" actuatorfrcrange="-87 87"/>
+            <geom material="fr3_white" mesh="link2" class="visual"/>
+            <geom name="fr3_link2_collision" class="collision" mesh="link2_coll"/>
+            <body name="fr3_link3" pos="0 -0.316 0" quat="1 1 0 0">
+              <inertial pos="0.0407016 -0.00482006 -0.0289731" quat="0.921025 -0.244161 0.155272 0.260745" mass="2.2449"
+                diaginertia="0.0267409 0.0189869 0.0171587"/>
+              <joint name="fr3_joint3" axis="0 0 1" range="-2.9007 2.9007" actuatorfrcrange="-87 87"/>
+              <geom mesh="link3_0" material="fr3_white" class="visual"/>
+              <geom mesh="link3_1" material="fr3_black" class="visual"/>
+              <geom name="fr3_link3_collision" class="collision" mesh="link3_coll"/>
+              <body name="fr3_link4" pos="0.0825 0 0" quat="1 1 0 0">
+                <inertial pos="-0.0459101 0.0630493 -0.00851879" quat="0.438018 0.803311 0.00937812 0.403414"
+                  mass="2.6156" diaginertia="0.05139 0.0372717 0.0160047"/>
+                <joint name="fr3_joint4" axis="0 0 1" range="-3.0421 -0.1518" actuatorfrcrange="-87 87"/>
+                <geom mesh="link4_0" material="fr3_white" class="visual"/>
+                <geom mesh="link4_1" material="fr3_black" class="visual"/>
+                <geom name="fr3_link4_collision" class="collision" mesh="link4_coll"/>
+                <body name="fr3_link5" pos="-0.0825 0.384 0" quat="1 -1 0 0">
+                  <inertial pos="-0.00160396 0.0292536 -0.0972966" quat="0.919031 0.125604 0.0751531 -0.366003"
+                    mass="2.32712" diaginertia="0.0579335 0.0449144 0.0130634"/>
+                  <joint name="fr3_joint5" axis="0 0 1" range="-2.8065 2.8065" actuatorfrcrange="-12 12"
+                    armature="0.074" frictionloss="0.763"/>
+                  <geom mesh="link5_0" material="fr3_white" class="visual"/>
+                  <geom mesh="link5_1" material="fr3_white" class="visual"/>
+                  <geom mesh="link5_2" material="fr3_black" class="visual"/>
+                  <geom name="fr3_link5_collision" class="collision" mesh="link5_coll"/>
+                  <body name="fr3_link6" quat="1 1 0 0">
+                    <inertial pos="0.0597131 -0.0410295 -0.0101693" quat="0.621301 0.552665 0.510011 0.220081"
+                      mass="1.81704" diaginertia="0.0175039 0.0161123 0.00193529"/>
+                    <joint name="fr3_joint6" axis="0 0 1" range="0.5445 4.5169" actuatorfrcrange="-12 12"
+                      armature="0.074" frictionloss="0.44"/>
+                    <geom mesh="link6_0" material="fr3_button_green" class="visual"/>
+                    <geom mesh="link6_1" material="fr3_white" class="visual"/>
+                    <geom mesh="link6_2" material="fr3_white" class="visual"/>
+                    <geom mesh="link6_3" material="fr3_gray" class="visual"/>
+                    <geom mesh="link6_4" material="fr3_button_red" class="visual"/>
+                    <geom mesh="link6_5" material="fr3_white" class="visual"/>
+                    <geom mesh="link6_6" material="fr3_black" class="visual"/>
+                    <geom mesh="link6_7" material="fr3_button_blue" class="visual"/>
+                    <geom name="fr3_link6_collision" class="collision" mesh="link6_coll"/>
+                    <body name="fr3_link7" pos="0.088 0 0" quat="1 1 0 0">
+                      <inertial pos="0.00452258 0.00862619 -0.0161633" quat="0.727579 0.0978688 -0.24906 0.63168"
+                        mass="0.627143" diaginertia="0.000223836 0.000223642 5.64132e-07"/>
+                      <joint name="fr3_joint7" axis="0 0 1" range="-3.0159 3.0159" actuatorfrcrange="-12 12"
+                        armature="0.074" frictionloss="0.248"/>
+                      <geom mesh="link7_0" material="fr3_black" class="visual"/>
+                      <geom mesh="link7_1" material="fr3_white" class="visual"/>
+                      <geom mesh="link7_2" material="fr3_white" class="visual"/>
+                      <geom mesh="link7_3" material="fr3_black" class="visual"/>
+                      <geom name="fr3_link7_collision" class="collision" mesh="link7_coll"/>
+                      <site name="attachment_site" pos="0 0 0.107"/>
+                      <body name="robotiq_base_mount" pos="0 0 0.117" childclass="2f85">
+                        <geom name="arm_grip_axis_x" type="capsule" fromto="0 0 0 0.1 0 0" size="0.004" rgba="1 0 0 1" contype="0" conaffinity="0"/>
+                        <geom name="arm_grip_axis_y" type="capsule" fromto="0 0 0 0 0.1 0" size="0.004" rgba="0 1 0 1" contype="0" conaffinity="0"/>
+                        <geom name="arm_grip_axis_z" type="capsule" fromto="0 0 0 0 0 0.1" size="0.004" rgba="0 0 1 1" contype="0" conaffinity="0"/>
+                        <geom class="rq_visual" mesh="base_mount" material="rq_black"/>
+                        <geom class="rq_collision" mesh="base_mount"/>
+                        <body name="robotiq_base" pos="0 0 0.0038" quat="1 0 0 -1">
+                          <inertial mass="0.777441" pos="0 -2.70394e-05 0.0354675" quat="1 -0.00152849 0 0"
+                            diaginertia="0.000260285 0.000225381 0.000152708"/>
+                          <geom class="rq_visual" mesh="base" material="rq_black"/>
+                          <geom class="rq_collision" mesh="base"/>
+                          <site name="pinch" pos="0 0 0.145" type="sphere" group="5" rgba="0.9 0.9 0.9 1" size="0.005"/>
+                          <body name="right_driver" pos="0 0.0306011 0.054904">
+                            <inertial mass="0.00899563" pos="2.96931e-12 0.0177547 0.00107314" quat="0.681301 0.732003 0 0"
+                              diaginertia="1.72352e-06 1.60906e-06 3.22006e-07"/>
+                            <joint name="right_driver_joint" class="driver"/>
+                            <geom class="rq_visual" mesh="driver" material="rq_gray"/>
+                            <geom class="rq_collision" mesh="driver"/>
+                            <body name="right_coupler" pos="0 0.0315 -0.0041">
+                              <inertial mass="0.0140974" pos="0 0.00301209 0.0232175" quat="0.705636 -0.0455904 0.0455904 0.705636"
+                                diaginertia="4.16206e-06 3.52216e-06 8.88131e-07"/>
+                              <joint name="right_coupler_joint" class="coupler"/>
+                              <geom class="rq_visual" mesh="coupler" material="rq_black"/>
+                              <geom class="rq_collision" mesh="coupler"/>
+                            </body>
+                          </body>
+                          <body name="right_spring_link" pos="0 0.0132 0.0609">
+                            <inertial mass="0.0221642" pos="-8.65005e-09 0.0181624 0.0212658" quat="0.663403 -0.244737 0.244737 0.663403"
+                              diaginertia="8.96853e-06 6.71733e-06 2.63931e-06"/>
+                            <joint name="right_spring_link_joint" class="spring_link"/>
+                            <geom class="rq_visual" mesh="spring_link" material="rq_black"/>
+                            <geom class="rq_collision" mesh="spring_link"/>
+                            <body name="right_follower" pos="0 0.055 0.0375">
+                              <inertial mass="0.0125222" pos="0 -0.011046 0.0124786" quat="1 0.1664 0 0"
+                                diaginertia="2.67415e-06 2.4559e-06 6.02031e-07"/>
+                              <joint name="right_follower_joint" class="follower"/>
+                              <geom class="rq_visual" mesh="follower" material="rq_black"/>
+                              <geom class="rq_collision" mesh="follower"/>
+                              <body name="right_pad" pos="0 -0.0189 0.01352">
+                                <geom class="rq_pad_box1" name="right_pad1"/>
+                                <geom class="rq_pad_box2" name="right_pad2"/>
+                                <inertial mass="0.0035" pos="0 -0.0025 0.0185" quat="0.707107 0 0 0.707107"
+                                  diaginertia="4.73958e-07 3.64583e-07 1.23958e-07"/>
+                                <geom class="rq_visual" mesh="pad" material="rq_metal"/>
+                                <body name="right_silicone_pad">
+                                  <geom class="rq_visual" mesh="silicone_pad" material="rq_black"/>
+                                </body>
+                              </body>
+                            </body>
+                          </body>
+                          <body name="left_driver" pos="0 -0.0306011 0.054904" quat="0 0 0 1">
+                            <inertial mass="0.00899563" pos="0 0.0177547 0.00107314" quat="0.681301 0.732003 0 0"
+                              diaginertia="1.72352e-06 1.60906e-06 3.22006e-07"/>
+                            <joint name="left_driver_joint" class="driver"/>
+                            <geom class="rq_visual" mesh="driver" material="rq_gray"/>
+                            <geom class="rq_collision" mesh="driver"/>
+                            <body name="left_coupler" pos="0 0.0315 -0.0041">
+                              <inertial mass="0.0140974" pos="0 0.00301209 0.0232175" quat="0.705636 -0.0455904 0.0455904 0.705636"
+                                diaginertia="4.16206e-06 3.52216e-06 8.88131e-07"/>
+                              <joint name="left_coupler_joint" class="coupler"/>
+                              <geom class="rq_visual" mesh="coupler" material="rq_black"/>
+                              <geom class="rq_collision" mesh="coupler"/>
+                            </body>
+                          </body>
+                          <body name="left_spring_link" pos="0 -0.0132 0.0609" quat="0 0 0 1">
+                            <inertial mass="0.0221642" pos="-8.65005e-09 0.0181624 0.0212658" quat="0.663403 -0.244737 0.244737 0.663403"
+                              diaginertia="8.96853e-06 6.71733e-06 2.63931e-06"/>
+                            <joint name="left_spring_link_joint" class="spring_link"/>
+                            <geom class="rq_visual" mesh="spring_link" material="rq_black"/>
+                            <geom class="rq_collision" mesh="spring_link"/>
+                            <body name="left_follower" pos="0 0.055 0.0375">
+                              <inertial mass="0.0125222" pos="0 -0.011046 0.0124786" quat="1 0.1664 0 0"
+                                diaginertia="2.67415e-06 2.4559e-06 6.02031e-07"/>
+                              <joint name="left_follower_joint" class="follower"/>
+                              <geom class="rq_visual" mesh="follower" material="rq_black"/>
+                              <geom class="rq_collision" mesh="follower"/>
+                              <body name="left_pad" pos="0 -0.0189 0.01352">
+                                <geom class="rq_pad_box1" name="left_pad1"/>
+                                <geom class="rq_pad_box2" name="left_pad2"/>
+                                <inertial mass="0.0035" pos="0 -0.0025 0.0185" quat="1 0 0 1"
+                                  diaginertia="4.73958e-07 3.64583e-07 1.23958e-07"/>
+                                <geom class="rq_visual" mesh="pad" material="rq_metal"/>
+                                <body name="left_silicone_pad">
+                                  <geom class="rq_visual" mesh="silicone_pad" material="rq_black"/>
+                                </body>
+                              </body>
+                            </body>
+                          </body>
+                        </body>
+                      </body>
+                    </body>
+                  </body>
+                </body>
+              </body>
+            </body>
+          </body>
+        </body>
+      </body>
+    </body>
+  </worldbody>
+
+  <tendon>
+    <fixed name="split">
+      <joint joint="right_driver_joint" coef="0.5"/>
+      <joint joint="left_driver_joint" coef="0.5"/>
+    </fixed>
+      <fixed name="live_split">
+      <joint joint="live_right_driver_joint" coef="0.5"/>
+      <joint joint="live_left_driver_joint" coef="0.5"/>
+    </fixed>
+  </tendon>
+
+  <equality>
+    <connect anchor="0 0 0" body1="right_follower" body2="right_coupler" solimp="0.95 0.99 0.001" solref="0.005 1"/>
+    <connect anchor="0 0 0" body1="left_follower" body2="left_coupler" solimp="0.95 0.99 0.001" solref="0.005 1"/>
+    <joint joint1="right_driver_joint" joint2="left_driver_joint" polycoef="0 1 0 0 0" solimp="0.95 0.99 0.001"
+      solref="0.005 1"/>
+      <connect anchor="0 0 0" body1="live_right_follower" body2="live_right_coupler" solimp="0.95 0.99 0.001" solref="0.005 1"/>
+    <connect anchor="0 0 0" body1="live_left_follower" body2="live_left_coupler" solimp="0.95 0.99 0.001" solref="0.005 1"/>
+    <joint joint1="live_right_driver_joint" joint2="live_left_driver_joint" polycoef="0 1 0 0 0" solimp="0.95 0.99 0.001"
+      solref="0.005 1"/>
+  </equality>
+
+  <actuator>
+    <position class="fr3" name="fr3_joint1" joint="fr3_joint1" kp="4500" kv="450"/>
+    <position class="fr3" name="fr3_joint2" joint="fr3_joint2" kp="4500" kv="450"/>
+    <position class="fr3" name="fr3_joint3" joint="fr3_joint3" kp="3500" kv="350"/>
+    <position class="fr3" name="fr3_joint4" joint="fr3_joint4" kp="3500" kv="350"/>
+    <position class="fr3" name="fr3_joint5" joint="fr3_joint5" kp="2000" kv="200"/>
+    <position class="fr3" name="fr3_joint6" joint="fr3_joint6" kp="2000" kv="200"/>
+    <position class="fr3" name="fr3_joint7" joint="fr3_joint7" kp="2000" kv="200"/>
+    <general class="2f85" name="fingers_actuator" tendon="split" forcerange="-5 5" ctrlrange="0 255"
+      gainprm="0.3137255 0 0" biasprm="0 -100 -10"/>
+      <general class="2f85" name="live_fingers_actuator" tendon="live_split" forcerange="-5 5" ctrlrange="0 255"
+      gainprm="0.3137255 0 0" biasprm="0 -100 -10"/>
+  </actuator>
+
+  <contact>
+    <exclude body1="fr3_link0" body2="fr3_link1"/>
+  </contact>
+</mujoco>

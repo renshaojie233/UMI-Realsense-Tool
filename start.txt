@@ -1,0 +1,8 @@
+cd /path/to/UMI_tool
+./start_official.sh --start-only
+source /opt/ros/noetic/setup.bash
+source ~/catkin_ws/devel/setup.bash
+source ~/venvs/fastumi/bin/activate
+python fastumi_gui.py
+
+codex resume 019cc241-0700-7fe1-bf2c-a6bafee03274

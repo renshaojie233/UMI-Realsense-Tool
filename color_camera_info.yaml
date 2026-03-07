@@ -1,0 +1,22 @@
+header: 
+  seq: 70
+  stamp: 
+    secs: 538
+    nsecs: 231528000
+  frame_id: "250801DR48FP25002287/color_optical_frame"
+height: 1280
+width: 1280
+distortion_model: "plumb_bob"
+D: [638.053955078125, 639.6728515625]
+K: [394.2147216796875, 0.0, 637.6441040039062, 0.0, 394.1768798828125, 640.7504272460938, 0.0, 0.0, 1.0]
+R: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+P: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+binning_x: 1
+binning_y: 1
+roi: 
+  x_offset: 0
+  y_offset: 0
+  height: 0
+  width: 0
+  do_rectify: False
+---
