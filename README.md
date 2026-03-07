@@ -44,6 +44,13 @@ You can override the virtualenv location if needed:
 VENV_PATH=/path/to/venv ./run_gui.sh
 ```
 
+## Usage
+
+- After the GUI opens, press and hold the right mouse button for about 3 seconds. The live pose will be aligned to the MuJoCo gripper pose as a simple calibration step, similar to teleoperation initialization.
+- Click the right mouse button once to start recording. Click it again to stop recording.
+- Recorded data is saved under the folder named by the current `Task` field in the GUI.
+- See `track0-2026-03-07_17.01.16.mp4` for an example workflow.
+
 ## Notes
 
 - `start_official.sh` in this repository is intended for the GUI bootstrap path. If the monitor-menu scripts are not present, it will only start the device and exit.
