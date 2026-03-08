@@ -41,5 +41,10 @@ fi
 mkdir -p "$ROS_RUNTIME_DIR/log"
 export ROS_HOME="$ROS_RUNTIME_DIR"
 export ROS_LOG_DIR="$ROS_RUNTIME_DIR/log"
+if ! bash "$SCRIPT_DIR/start_official.sh" --start-only; then
+  echo "UMI backend is not ready; aborting GUI launch." >&2
+  exit 1
+fi
+export FASTUMI_SKIP_BACKEND=1
 
 exec python fastumi_gui.py "$@"

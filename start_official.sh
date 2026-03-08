@@ -33,10 +33,10 @@ source_ros_env() {
 }
 
 device_running() {
-  if pgrep -f "roslaunch .*xv_sdk.launch" >/dev/null 2>&1; then
+  if pgrep -f "/opt/ros/.*/bin/roslaunch xv_sdk xv_sdk.launch" >/dev/null 2>&1; then
     return 0
   fi
-  if pgrep -f "xv_sdk" >/dev/null 2>&1; then
+  if pgrep -f "/lib/xv_sdk/xv_sdk( |$)" >/dev/null 2>&1; then
     return 0
   fi
   return 1
@@ -60,6 +60,31 @@ rosnode_xv_sdk_alive() {
   timeout 3 rosnode ping -c 1 /xv_sdk >/dev/null 2>&1
 }
 
+xv_topics_ready() {
+  if ! command -v rostopic >/dev/null 2>&1; then
+    return 1
+  fi
+  local pattern='^/xv_sdk/[^/]+/(slam/pose|color_camera/image|clamp/Data)$|^/(xv_sdk/(slam/pose|color_camera/image|clamp/Data)|slam/pose|color_camera/image|clamp/Data)$'
+  if command -v rg >/dev/null 2>&1; then
+    rostopic list 2>/dev/null | rg -q "$pattern"
+  else
+    rostopic list 2>/dev/null | grep -Eq "$pattern"
+  fi
+}
+
+wait_for_xv_topics() {
+  local tries="${1:-15}"
+  local delay="${2:-2}"
+  local i
+  for ((i=1; i<=tries; i++)); do
+    if rosnode_xv_sdk_alive && xv_topics_ready; then
+      return 0
+    fi
+    sleep "$delay"
+  done
+  return 1
+}
+
 cleanup_stale_rosnode() {
   if ! command -v rosnode >/dev/null 2>&1; then
     return 0
@@ -70,13 +95,13 @@ cleanup_stale_rosnode() {
 start_device_if_needed() {
   if device_running; then
     source_ros_env
-    if rosnode_has_xv_sdk && rosnode_xv_sdk_alive; then
+    if rosnode_has_xv_sdk && rosnode_xv_sdk_alive && xv_topics_ready; then
       echo "Device already running."
       return 0
     fi
     echo "Stale xv_sdk process detected; restarting."
-    pkill -f "roslaunch .*xv_sdk.launch" >/dev/null 2>&1 || true
-    pkill -f "xv_sdk" >/dev/null 2>&1 || true
+    pkill -f "/opt/ros/.*/bin/roslaunch xv_sdk xv_sdk.launch" >/dev/null 2>&1 || true
+    pkill -f "/lib/xv_sdk/xv_sdk( |$)" >/dev/null 2>&1 || true
     cleanup_stale_rosnode
     sleep 1
   fi
@@ -85,7 +110,13 @@ start_device_if_needed() {
   source_ros_env
   nohup roslaunch xv_sdk xv_sdk.launch >"$LOG_FILE" 2>&1 &
   echo "Device started in background. Log: $LOG_FILE"
-  sleep 3
+  if wait_for_xv_topics 20 2; then
+    echo "Device topics are ready."
+  else
+    echo "Error: xv_sdk started, but no UMI device topics became ready." >&2
+    echo "Check the UMI device USB connection/power and then retry." >&2
+    return 1
+  fi
 }
 
 main() {

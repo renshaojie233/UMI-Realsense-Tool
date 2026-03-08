@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import argparse
+from collections import deque
 import json
 import math
 import os
@@ -88,6 +89,8 @@ TARGET_GRIPPER_POSE = {
 
 
 def _start_official_backend():
+    if os.environ.get("FASTUMI_SKIP_BACKEND", "").strip() == "1":
+        return True
     script = _OFFICIAL_SCRIPT
     if not os.path.isfile(script):
         return False
@@ -612,6 +615,73 @@ def build_gui_classes(QtCore, QtGui, QtWidgets):
             slider_val = max(self.slider.minimum(), min(self.slider.maximum(), slider_val))
             self.slider.setValue(slider_val)
 
+    class GripperPlotWidget(QtWidgets.QWidget):
+        def __init__(self, parent=None, max_points=180):
+            super().__init__(parent)
+            self._values = deque(maxlen=max_points)
+            self.setMinimumSize(220, 90)
+            self.setSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
+
+        def push_value(self, value):
+            if value is None:
+                return
+            try:
+                self._values.append(float(value))
+            except Exception:
+                return
+            self.update()
+
+        def paintEvent(self, event):
+            painter = QtGui.QPainter(self)
+            painter.setRenderHint(QtGui.QPainter.Antialiasing, True)
+            rect = self.rect()
+            painter.fillRect(rect, QtGui.QColor("#f8f8f8"))
+
+            plot_rect = rect.adjusted(10, 18, -10, -10)
+            painter.setPen(QtGui.QPen(QtGui.QColor("#cfcfcf"), 1))
+            for frac in (0.25, 0.5, 0.75):
+                y = plot_rect.top() + int(plot_rect.height() * frac)
+                painter.drawLine(plot_rect.left(), y, plot_rect.right(), y)
+            painter.drawRect(plot_rect)
+
+            painter.setPen(QtGui.QPen(QtGui.QColor("#555555")))
+            painter.drawText(rect.adjusted(10, 2, -10, 0), QtCore.Qt.AlignLeft | QtCore.Qt.AlignTop, "Gripper")
+
+            if not self._values:
+                painter.drawText(plot_rect, QtCore.Qt.AlignCenter, "No clamp data")
+                return
+
+            y_max = max(100.0, max(self._values))
+            y_min = min(0.0, min(self._values))
+            if y_max - y_min < 1e-6:
+                y_max = y_min + 1.0
+
+            points = []
+            n = len(self._values)
+            for i, value in enumerate(self._values):
+                if n == 1:
+                    x = plot_rect.center().x()
+                else:
+                    x = plot_rect.left() + (plot_rect.width() * i) / float(n - 1)
+                ratio = (value - y_min) / float(y_max - y_min)
+                y = plot_rect.bottom() - ratio * plot_rect.height()
+                points.append(QtCore.QPointF(x, y))
+
+            path = QtGui.QPainterPath()
+            path.moveTo(points[0])
+            for pt in points[1:]:
+                path.lineTo(pt)
+            painter.setPen(QtGui.QPen(QtGui.QColor("#e53935"), 2))
+            painter.drawPath(path)
+
+            latest = self._values[-1]
+            painter.setPen(QtGui.QPen(QtGui.QColor("#222222")))
+            painter.drawText(
+                rect.adjusted(10, 2, -10, 0),
+                QtCore.Qt.AlignRight | QtCore.Qt.AlignTop,
+                "{:.1f}".format(latest),
+            )
+
     class FastUMIGui(QtWidgets.QMainWindow):
         def __init__(self, args, shared):
             super().__init__()
@@ -717,18 +787,27 @@ def build_gui_classes(QtCore, QtGui, QtWidgets):
             self.rs2_label.setAlignment(QtCore.Qt.AlignCenter)
             self.rs2_label.setMinimumSize(320, 200)
             self.rs2_label.setSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
+            self.record_panel = QtWidgets.QWidget()
+            self.record_panel.setMinimumSize(220, 140)
+            self.record_panel.setSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
+            record_panel_layout = QtWidgets.QVBoxLayout(self.record_panel)
+            record_panel_layout.setContentsMargins(0, 0, 0, 0)
+            record_panel_layout.setSpacing(8)
+            self.gripper_plot = GripperPlotWidget(self.record_panel)
             self.record_state_label = QtWidgets.QLabel("REC: OFF")
             self.record_state_label.setAlignment(QtCore.Qt.AlignCenter)
-            self.record_state_label.setMinimumSize(220, 120)
+            self.record_state_label.setMinimumSize(220, 64)
             self.record_state_label.setSizePolicy(
                 QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding
             )
+            record_panel_layout.addWidget(self.gripper_plot, 3)
+            record_panel_layout.addWidget(self.record_state_label, 2)
             view_layout.addWidget(self.raw_label, 0, 0)
             view_layout.addWidget(self.undistort_label, 0, 1)
             view_layout.addWidget(self.mujoco_label, 0, 2)
             view_layout.addWidget(self.rs1_label, 1, 0)
             view_layout.addWidget(self.rs2_label, 1, 1)
-            view_layout.addWidget(self.record_state_label, 1, 2)
+            view_layout.addWidget(self.record_panel, 1, 2)
             view_layout.setColumnStretch(0, 1)
             view_layout.setColumnStretch(1, 1)
             view_layout.setColumnStretch(2, 1)
@@ -1796,6 +1875,9 @@ def build_gui_classes(QtCore, QtGui, QtWidgets):
                 latest_tf = dict(self.shared["latest_tf"])
             latest_slam = dict(self.shared["latest_slam"])
             latest_clamp = dict(self.shared["latest_clamp"])
+            clamp_value = latest_clamp.get("value") if isinstance(latest_clamp, dict) else None
+            if hasattr(self, "gripper_plot"):
+                self.gripper_plot.push_value(clamp_value)
             live_pose = None
             tf_pose = None
             if latest_tf.get("pos") is not None and latest_tf.get("quat") is not None:
@@ -1818,12 +1900,12 @@ def build_gui_classes(QtCore, QtGui, QtWidgets):
             joint_payload = {
                 "时间戳": time.time(),
                 "关节": arm_joint,
-                "夹爪开合": latest_clamp.get("value") if isinstance(latest_clamp, dict) else None,
+                "夹爪开合": clamp_value,
             }
             cartesian_payload = {
                 "时间戳": time.time(),
                 "目标位姿": {"p": list(aligned_pos), "q": list(aligned_quat)} if tf_pose else None,
-                "夹爪开合": latest_clamp.get("value") if isinstance(latest_clamp, dict) else None,
+                "夹爪开合": clamp_value,
             }
             ros_pose_payload = {
                 "时间戳": time.time(),
@@ -1833,7 +1915,7 @@ def build_gui_classes(QtCore, QtGui, QtWidgets):
                     else None
                 ),
                 "置信度": latest_slam.get("conf"),
-                "夹爪开合": latest_clamp.get("value") if isinstance(latest_clamp, dict) else None,
+                "夹爪开合": clamp_value,
                 "夹爪时间戳": latest_clamp.get("ts") if isinstance(latest_clamp, dict) else None,
             }
 
